@@ -25,7 +25,7 @@ export default function Hero() {
         </Reveal>
         <Reveal delay={0.16}>
           <p className="mx-auto mt-6 max-w-[640px] text-[19px] leading-[1.45] text-white/85 md:text-[24px]">
-            Construimos tecnología, comercio, medios y juegos para México. Este es el lugar donde viven todos.
+            Dbit, Inc. invierte, asesora y construye proyectos de tecnología, comercio, medios y juegos. Aquí viven todos.
           </p>
         </Reveal>
         <Reveal delay={0.24}>

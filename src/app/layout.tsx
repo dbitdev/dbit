@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ConsentBanner from "@/components/ConsentBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s | Dbit, Inc.",
   },
   description:
-    "Dbit, Inc. es un conglomerado tecnológico de vanguardia enfocado en e-commerce de alto rendimiento, desarrollo de videojuegos con Dbit Games, infraestructura cloud, medios digitales (Mexica TV) y soluciones de software escalables.",
+    "Dbit, Inc. invierte, asesora y consulta en tecnología, finanzas y legal para los proyectos, empresas y marcas de su ecosistema: Hueyi, Nectar, Wey, Mexica TV, Festus, Dbit Games y más.",
   keywords: [
     "Dbit",
     "Dbit Inc",
@@ -98,6 +99,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-[#fbfbfd] text-[#1d1d1f] antialiased">
         {children}
+        <ConsentBanner />
       </body>
     </html>
   );

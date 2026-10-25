@@ -1,121 +1,103 @@
-import { shopifyFetch, getProductsQuery, mockProducts } from "@/lib/shopify";
-import Link from "next/link";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import type { Metadata } from "next";
-import { ShoppingBag, Sparkles, ShieldCheck, Truck, ArrowRight, Tag } from "lucide-react";
+import ProductArt, { type Garment } from "@/components/ProductArt";
+import ProjectMark from "@/components/ProjectMark";
+import Reveal from "@/components/Reveal";
+import { projects } from "@/lib/projects";
 
 export const metadata: Metadata = {
-  title: "Dbit Store Oficial | Merch, Hardware & Dbit Games Gear",
-  description: "Tienda oficial de Dbit, Inc. Colecciones oficiales, indumentaria técnica, periféricos gaming y pases de desarrollador.",
+  title: "Tienda Dbit",
+  description: "La tienda de Dbit, nuestra marca de merchandising, llega pronto a Hueyi.",
 };
 
-export default async function ShopPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  await searchParams;
+const hueyi = projects.find((p) => p.slug === "hueyi")!;
+const pay = projects.find((p) => p.slug === "pay")!;
 
-  const response = await shopifyFetch({
-    query: getProductsQuery,
-    variables: { first: 20 },
-  });
+const items: { name: string; note: string; garment: Garment }[] = [
+  { name: "Playeras", note: "Algodón pesado, corte relajado.", garment: "tee" },
+  { name: "Sudaderas", note: "Para la oficina y para el frío.", garment: "hoodie" },
+  { name: "Gorras y accesorios", note: "Los detalles que completan.", garment: "cap" },
+];
 
-  const products = response.body?.data?.products?.edges || mockProducts.map((p) => ({ node: p }));
-
+export default function ShopPage() {
   return (
-    <div className="min-h-screen text-[#121316] selection:bg-navy-700/15">
-      <Header />
-
-      <main className="pt-20 pb-24 container mx-auto px-4 sm:px-6">
-        {/* Hero Banner in Store */}
-        <section className="py-16 text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-navy-700/10 border border-navy-700/30 text-navy-700 text-xs font-bold uppercase tracking-widest">
-            <ShoppingBag size={15} />
-            <span>Tienda Oficial &middot; Dbit Store</span>
-          </div>
-
-          <h1 className="font-heading text-4xl sm:text-6xl font-semibold tracking-tight text-[#121316]">
-            Dbit <span className="text-navy-700">Store</span>
-          </h1>
-
-          <p className="text-base sm:text-lg text-black/60">
-            Descubre ropa técnica, accesorios gaming oficiales de Dbit Games, licencias y productos exclusivos con envío global.
-          </p>
+    <>
+      <Header overDark />
+      <main>
+        <section className="relative overflow-hidden bg-black px-5 pb-20 pt-32 text-center text-white md:pb-28 md:pt-40">
+          <div aria-hidden className="pointer-events-none absolute left-1/2 top-16 h-[480px] w-[820px] -translate-x-1/2 rounded-full opacity-40 blur-3xl [background:radial-gradient(closest-side,#3a3a3c,transparent)]" />
+          <Reveal className="relative">
+            <Image src="/brand/dbit-mark.png" alt="" width={1080} height={1080} priority className="mx-auto h-24 w-24 invert md:h-32 md:w-32" />
+            <p className="mt-6 text-[17px] font-semibold text-white/55 md:text-[21px]">Tienda Dbit</p>
+            <h1 className="mt-2 text-[48px] font-semibold leading-[1.05] tracking-[-0.035em] md:text-[88px]">
+              Muy pronto.
+              <br />
+              <span className="text-white/45">En Hueyi.</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-[560px] text-[19px] leading-[1.45] text-white/70 md:text-[21px]">
+              La tienda de Dbit vivirá dentro de Hueyi: misma cuenta, mismo carrito y pago seguro con Hueyi Pay.
+            </p>
+            <a
+              href="mailto:hola@dbit.inc?subject=Av%C3%ADsame%20cuando%20abra%20la%20tienda%20Dbit"
+              className="mt-9 inline-block rounded-full bg-white px-7 py-3 text-[17px] text-black transition-opacity hover:opacity-85"
+            >
+              Avísame cuando abra
+            </a>
+          </Reveal>
         </section>
 
-        {/* Benefits Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-16 max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#f5f5f7] border border-black/5">
-            <ShieldCheck size={24} className="text-navy-700" />
-            <div className="text-xs font-semibold text-black/70">Garantía Oficial Dbit Inc.</div>
-          </div>
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#f5f5f7] border border-black/5">
-            <Truck size={24} className="text-navy-700" />
-            <div className="text-xs font-semibold text-black/70">Envíos Rápidos & Seguros</div>
-          </div>
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#f5f5f7] border border-black/5">
-            <Tag size={24} className="text-navy-700" />
-            <div className="text-xs font-semibold text-black/70">Ediciones Exclusivas & Limitadas</div>
-          </div>
-        </div>
-
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {products.map(({ node: product }: any) => {
-            const price = product.priceRange?.minVariantPrice?.amount || "35.00";
-            const currency = product.priceRange?.minVariantPrice?.currencyCode || "USD";
-            const imageUrl = product.featuredImage?.url || "/assets/media/1.jpg";
-
-            return (
-              <Link
-                key={product.id || product.handle}
-                href={`/product/${product.handle}`}
-                className="group rounded-3xl overflow-hidden bg-white border border-black/10 hover:border-navy-700/40 transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 flex flex-col justify-between"
-              >
-                {/* Image */}
-                <div className="relative aspect-square overflow-hidden bg-zinc-100">
-                  <Image
-                    src={imageUrl}
-                    alt={product.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[11px] font-bold text-navy-700 border border-black/10">
-                      ${price} {currency}
-                    </span>
+        <section className="bg-[#f5f5f7] py-24 md:py-32">
+          <div className="mx-auto max-w-[1080px] px-5">
+            <Reveal>
+              <h2 className="text-[36px] font-semibold tracking-[-0.03em] md:text-[56px]">
+                La primera colección.
+                <span className="text-black/40"> Lo que viene.</span>
+              </h2>
+            </Reveal>
+            <div className="mt-12 grid gap-4 md:grid-cols-3">
+              {items.map((it, i) => (
+                <Reveal key={it.name} delay={i * 0.06}>
+                  <div className="flex h-full flex-col rounded-[28px] bg-white p-8">
+                    <div className="flex aspect-[4/3] items-center justify-center rounded-[20px] bg-gradient-to-b from-[#fafafa] to-[#ececef] p-6">
+                      <ProductArt garment={it.garment} />
+                    </div>
+                    <h3 className="mt-6 text-[24px] font-semibold tracking-[-0.02em]">{it.name}</h3>
+                    <p className="mt-1 text-[16px] text-black/55">{it.note}</p>
+                    <p className="mt-4 text-[13px] font-medium text-black/40">Próximamente</p>
                   </div>
-                </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
 
-                {/* Details */}
-                <div className="p-6 sm:p-7 space-y-4 flex-grow flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <h2 className="text-lg font-semibold text-[#121316] group-hover:text-navy-700 transition-colors tracking-tight line-clamp-2">
-                      {product.title}
-                    </h2>
-                    <p className="text-xs text-black/50 line-clamp-2 leading-relaxed">
-                      {product.description || "Producto oficial de la línea de tecnología y gaming de Dbit Inc."}
-                    </p>
+        <section className="bg-white py-24 md:py-32">
+          <div className="mx-auto max-w-[1080px] px-5">
+            <Reveal>
+              <h2 className="text-[36px] font-semibold tracking-[-0.03em] md:text-[56px]">Por qué en Hueyi.</h2>
+            </Reveal>
+            <div className="mt-12 grid gap-4 md:grid-cols-2">
+              {[
+                { p: hueyi, t: "Una sola cuenta", d: "Compra Dbit con la misma cuenta que usas en Wey, Nectar y el resto del ecosistema." },
+                { p: pay, t: "Pago con Hueyi Pay", d: "Tarjetas, Apple Pay, Google Pay y Mercado Pago, en un checkout seguro." },
+              ].map(({ p, t, d }) => (
+                <Reveal key={t}>
+                  <div className="flex h-full items-start gap-5 rounded-[24px] bg-[#f5f5f7] p-7">
+                    <ProjectMark project={p} size={56} />
+                    <div>
+                      <h3 className="text-[21px] font-semibold tracking-[-0.015em]">{t}</h3>
+                      <p className="mt-1.5 text-[16px] leading-[1.5] text-black/60">{d}</p>
+                    </div>
                   </div>
-
-                  <div className="pt-4 border-t border-black/10 flex items-center justify-between">
-                    <span className="text-xs font-bold text-navy-700 uppercase tracking-wider group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                      Ver Detalles &rarr;
-                    </span>
-                    <span className="text-[10px] text-black/40 font-mono uppercase">En Stock</span>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
-
       <Footer />
-    </div>
+    </>
   );
 }
